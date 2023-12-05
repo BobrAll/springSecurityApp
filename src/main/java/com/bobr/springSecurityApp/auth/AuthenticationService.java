@@ -1,6 +1,7 @@
 package com.bobr.springSecurityApp.auth;
 
 import com.bobr.springSecurityApp.config.JwtService;
+import com.bobr.springSecurityApp.exceptions.registration.UserAlreadyRegisteredException;
 import com.bobr.springSecurityApp.user.Role;
 import com.bobr.springSecurityApp.user.User;
 import com.bobr.springSecurityApp.user.UserRepository;
@@ -20,6 +21,10 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
+        if (repository.findByEmail(request.getEmail()).isPresent()) {
+            throw new UserAlreadyRegisteredException();
+        }
+
         var user = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
